@@ -1,0 +1,11 @@
+#include "../log/log.h"
+
+#pragma once
+
+#define handle_error(msg) \
+do { ALOGF(msg); exit(EXIT_FAILURE); } while (0)
+
+
+#define RETURN_ERROR( msg, ret_value)\
+do { ALOGF( msg); return ret_value;} while (0)
+
