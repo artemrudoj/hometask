@@ -12,7 +12,7 @@ void* mapFileToMemory( int fd, struct stat *info )
 	if ( fstat( fd, info) == -1 )
 		RETURN_ERROR("fstat error", NULL);
 	if (( src = mmap(0, info->st_size, PROT_READ, MAP_PRIVATE, fd, 0) ) == MAP_FAILED)
-		RETURN_ERROR("mmap error", NULL);
+		RETURN_ERROR("mapFileToMemory: mmap error", NULL);
 	return src;
 }
 
@@ -124,7 +124,7 @@ int mydecompress(char *source, char *dest , file_block *info)
         i++;
     } while (ret != Z_STREAM_END);
     if ( size != info->size_before)
-        ALOGF("mydecompress: file \"%s\" is incorrect decompressed, size before = %d, size now = %d", info->path, info->size_before, size )
+        ALOGF("mydecompress: file \"%s\" is incorrect decompressed, size before = %d, size now = %d", info->path, info->size_before, size );
     (void)inflateEnd(&strm);
     return ret == Z_STREAM_END  ? Z_OK : Z_DATA_ERROR;
 }

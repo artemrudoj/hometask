@@ -4,34 +4,18 @@
 
 #define COMPRESSION_TYPE Z_DEFAULT_COMPRESSION
 
-int compressFile( int fd, char **dest, char *path)
+int compressFile( char *source, char **dest, file_block* fb)
 {
-	struct stat info;
-	file_block fb;
-	char *mappedFile;
-	if ( fstat( fd, &info) == -1 )
-		RETURN_ERROR("fstat error", -1);
-	mappedFile = mapFileToMemory( fd, &info);
-	if ( mappedFile == NULL)
-		RETURN_ERROR("compressFile: mapFileToMemory error", -1);
-	*dest = malloc( info.st_size + SIZE_OF_FILE_BLOCK);
+	*dest = (char *)malloc( fb->size_before + SIZE_OF_FILE_BLOCK);
 	if ( *dest == NULL)
 		RETURN_ERROR("compressFile: malloc error", -1);
-	makeFileBlockStruct( &fb, &info, path);
-	int ret = mycompress( mappedFile, &(*dest)[SIZE_OF_FILE_BLOCK], COMPRESSION_TYPE , &fb);
+	int ret = mycompress( source, &(*dest)[SIZE_OF_FILE_BLOCK], COMPRESSION_TYPE , fb);
 	if (ret != Z_OK)
 	{
 		free( *dest);
 		RETURN_ERROR("compressFile: compress error", -1);
 	}
-	makeFileWrapper( *dest, &fb );
-	getFileSizeAfter(*dest);
-	ret = munmap(mappedFile, info.st_size );
-	if ( ret == -1 )
-	{
-		free( *dest);
-		RETURN_ERROR("compressFile: munmap error", -1);
-	}
+	makeFileWrapper( *dest, fb );
 	return 0;
 }
 

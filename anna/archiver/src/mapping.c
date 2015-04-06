@@ -12,7 +12,7 @@ void* mapFileToMemory( int fd, struct stat *info )
 	if ( fstat( fd, info) == -1 )
 		RETURN_ERROR("fstat error", NULL);
 	if (( src = mmap(0, info->st_size, PROT_READ, MAP_PRIVATE, fd, 0) ) == MAP_FAILED)
-		RETURN_ERROR("mmap error", NULL);
+		RETURN_ERROR("mapFileToMemory: mmap error", NULL);
 	return src;
 }
 

@@ -5,29 +5,36 @@ int main( int argc, char **argv)
 {
 	if (argc == 3 && (strcmp(argv[1], "-c") == 0)) 
 	{
-		file_size info;
+		struct stat info;
+		file_block fb;
 		if ( init_log( A, "map.log") == -1)
 		{
 			shm_unlink( SHAREDMEM_FILENAME);
 			return -1;
 		}
 		int fd = open( argv[2] , O_RDWR,  0777);
+		char *mappedFile = mapFileToMemory( fd, &info);
+		if ( mappedFile == NULL)
+			RETURN_ERROR("mapFileToMemory error", -1);
 		char *compressed;
 		int ret;
-		ret = compressFile( fd, &compressed, argv[2]);
+		makeFileBlockStruct( &fb, &info, argv[2]);
+		ret = compressFile( mappedFile, &compressed, &fb);
 		if( ret != 0 )
 			RETURN_ERROR( "comressFile", -1 );
 		int afterSize = getFileSizeAfter( compressed);
-		ALOGD("afterSize = %d", afterSize);
-		char name[20];
+		char name[20];												//test variant
 		strcpy( name, argv[2]);
 		strcat( name, ".arch");
 		close(fd);
 		fd = open( name, O_RDWR | O_CREAT, 0777);
 		int len;
-		len = write( fd, compressed, afterSize + sizeof(file_block));
+		len = write( fd, compressed, afterSize + SIZE_OF_FILE_BLOCK);
 		close(fd);
-		//free(compressed);
+		ret = munmap(mappedFile, fb.size_before );
+		if ( ret == -1 )
+			RETURN_ERROR("main: munmap error", -1);
+		free(compressed);
 	}
 	else if (argc == 3 && (strcmp(argv[1], "-d") == 0)) 
 	{
@@ -51,6 +58,9 @@ int main( int argc, char **argv)
 		write( fd, dest, getFileSizeBefore(mappedFile) );
 		close(fd);
 		free(dest);
+		ret = munmap(mappedFile, info.st_size );
+		if ( ret == -1 )
+			RETURN_ERROR("main: munmap error", -1);
 	}
 	else
 		printf(" Incorrect arguments\n");
