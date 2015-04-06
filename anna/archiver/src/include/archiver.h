@@ -1,4 +1,4 @@
-
+#include <libgen.h>
 
 
 #define SIZE 256
@@ -15,6 +15,7 @@ typedef struct _file_block
 }file_block;
 
 int compressFile( int fd, char **dest, char *path);
+int decompressFile( char *source, char **dest );
 void makeFileWrapper(char *dest, file_block *fb );
 void makeFileBlockStruct( file_block *dest, struct stat *source, char *path );
 int getFileSizeAfter( char *source);

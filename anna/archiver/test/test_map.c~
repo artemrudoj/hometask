@@ -39,16 +39,18 @@ int main( int argc, char **argv)
 		int fd = open( argv[2] , O_RDWR,  0777);
 		struct stat info;
 		file_block fb;
-		char *mappedFile;
-		if ( fstat( fd, &info) == -1 )
-			RETURN_ERROR("fstat error", -1);
+		char *mappedFile, *dest;
 		mappedFile = mapFileToMemory( fd, &info);
 		if ( mappedFile == NULL)
 			RETURN_ERROR("mapFileToMemory error", -1);
-		int ret;
-		ret =  decompressFile( mappedFile);
+		int ret =  decompressFile( mappedFile, &dest);
 		if( ret != 0 )
 			RETURN_ERROR( "decomressFile", -1 );
+		close(fd);
+		fd = open( basename(getFilePath(mappedFile)), O_RDWR | O_CREAT, 0777);
+		write( fd, dest, getFileSizeBefore(mappedFile) );
+		close(fd);
+		free(dest);
 	}
 	else
 		printf(" Incorrect arguments\n");

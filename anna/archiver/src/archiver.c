@@ -1,5 +1,5 @@
 #include "defines.h"
-#include <libgen.h>
+
 
 
 #define COMPRESSION_TYPE Z_DEFAULT_COMPRESSION
@@ -13,16 +13,16 @@ int compressFile( int fd, char **dest, char *path)
 		RETURN_ERROR("fstat error", -1);
 	mappedFile = mapFileToMemory( fd, &info);
 	if ( mappedFile == NULL)
-		RETURN_ERROR("mapFileToMemory error", -1);
+		RETURN_ERROR("compressFile: mapFileToMemory error", -1);
 	*dest = malloc( info.st_size + SIZE_OF_FILE_BLOCK);
 	if ( *dest == NULL)
-		RETURN_ERROR("malloc error", -1);
+		RETURN_ERROR("compressFile: malloc error", -1);
 	makeFileBlockStruct( &fb, &info, path);
 	int ret = mycompress( mappedFile, &(*dest)[SIZE_OF_FILE_BLOCK], COMPRESSION_TYPE , &fb);
 	if (ret != Z_OK)
 	{
 		free( *dest);
-		RETURN_ERROR("compress error", -1);
+		RETURN_ERROR("compressFile: compress error", -1);
 	}
 	makeFileWrapper( *dest, &fb );
 	getFileSizeAfter(*dest);
@@ -30,27 +30,24 @@ int compressFile( int fd, char **dest, char *path)
 	if ( ret == -1 )
 	{
 		free( *dest);
-		RETURN_ERROR("munmap error", -1);
+		RETURN_ERROR("compressFile: munmap error", -1);
 	}
 	return 0;
 }
 
-int decompressFile( char *source )
+int decompressFile( char *source, char **dest )
 {
 	file_block  fb;
 	parseFileBlock( source, &fb);
-	char *dest = (char *) malloc ( fb.size_before + SIZE_OF_FILE_BLOCK );
-	if ( dest == NULL)
-		RETURN_ERROR("malloc error", -1);
-	int ret = mydecompress( source + SIZE_OF_FILE_BLOCK, dest , &fb);
+	*dest = (char *) malloc ( fb.size_before + SIZE_OF_FILE_BLOCK );
+	if ( *dest == NULL)
+		RETURN_ERROR("decompressFile: malloc error", -1);
+	int ret = mydecompress( source + SIZE_OF_FILE_BLOCK, *dest , &fb);
 	if (ret != Z_OK)
 	{
-		free( dest);
-		RETURN_ERROR("decompress error", -1);
+		free( *dest);
+		RETURN_ERROR("decompressFile: decompress error", -1);
 	}
-	int fd;
-	fd = open( basename(fb.path), O_RDWR | O_CREAT, 0777);
-	write( fd, dest, fb.size_before );
 	return 0;
 }
 
