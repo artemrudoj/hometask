@@ -23,5 +23,5 @@ typedef struct _file_size
 
 void* mapFileToMemory( int fd, struct stat *info );
 int mycompress(char *source, char *dest, int level , file_block *info);
-int mydecompress(char *source, char *dest , file_size *info);
+int mydecompress(char *source, char *dest , file_block *info);
 

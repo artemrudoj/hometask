@@ -8,6 +8,7 @@
 #include <string.h>
 #include <assert.h>
 #include "zlib.h"
+#include "archiver.h"
 
 #pragma once
 

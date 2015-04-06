@@ -64,14 +64,13 @@ int mycompress(char *source, char *dest, int level , file_block *info)
         assert(strm.avail_in == 0);
         i++;
     } while (flush != Z_FINISH);
-    ALOGD("info->size_after = %d",info->size_after);
     assert(ret == Z_STREAM_END);
     (void)deflateEnd(&strm);
     return Z_OK;
 }
 
 
-int mydecompress(char *source, char *dest , file_size *info)
+int mydecompress(char *source, char *dest , file_block *info)
 {
     int ret;
     unsigned have;
@@ -90,12 +89,12 @@ int mydecompress(char *source, char *dest , file_size *info)
     if (ret != Z_OK)
         return ret;
     int i = 0, last_i;
-    last_i = info->after_size / CHUNK;
-    info->before_size = 0;
+    last_i = info->size_after / CHUNK;
+    size_t size = 0;
     do {
         if ( i == last_i )
         {
-            strm.avail_in =  info->after_size % CHUNK;
+            strm.avail_in =  info->size_after % CHUNK;
         }
         else if ( i == last_i + 1 )
         {
@@ -120,11 +119,12 @@ int mydecompress(char *source, char *dest , file_size *info)
             have = CHUNK - strm.avail_out;
             memcpy(tmp, out, have);
             tmp += have;
-            info->before_size += have;
+            size += have;
         } while (strm.avail_out == 0);
         i++;
     } while (ret != Z_STREAM_END);
-
+    if ( size != info->size_before)
+        ALOGF("mydecompress: file \"%s\" is incorrect decompressed, size before = %d, size now = %d", info->path, info->size_before, size );
     (void)inflateEnd(&strm);
     return ret == Z_STREAM_END  ? Z_OK : Z_DATA_ERROR;
 }
