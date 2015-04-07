@@ -14,12 +14,6 @@
 
 
 
-typedef struct _file_size
-{
-	int before_size;
-	int after_size;
-}file_size;
-
 
 void* mapFileToMemory( int fd, struct stat *info );
 int mycompress(char *source, char *dest, int level , file_block *info);

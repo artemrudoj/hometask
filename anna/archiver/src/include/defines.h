@@ -3,9 +3,3 @@
 #include "mapping.h"
 
 #pragma once
-
-/*enum 
-{
-	SUCCESS 0x1;
-	
-}*/

@@ -1,6 +1,12 @@
 #include "defines.h"
 
 
+
+/* 
+	сжатие     ./test_map -c file
+	распаковка ./test_map -d file
+*/
+
 int main( int argc, char **argv)
 {
 	if (argc == 3 && (strcmp(argv[1], "-c") == 0)) 

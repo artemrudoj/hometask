@@ -1,12 +1,11 @@
-#include "mapping.h"
-#include "error.h"
+#include "defines.h"
 
 #define CHUNK 16384
 
 
 
 
-void* mapFileToMemory( int fd, struct stat *info )
+void*  mapFileToMemory( int fd, struct stat *info )
 {
 	void *src;
 	if ( fstat( fd, info) == -1 )
@@ -22,7 +21,6 @@ int mycompress(char *source, char *dest, int level , file_block *info)
     int ret, flush;
     unsigned have;
     z_stream strm;
-    unsigned char in[CHUNK];
     unsigned char out[CHUNK];
 
     char *tmp;
@@ -75,7 +73,6 @@ int mydecompress(char *source, char *dest , file_block *info)
     int ret;
     unsigned have;
     z_stream strm;
-    unsigned char in[CHUNK];
     unsigned char out[CHUNK];
     char *tmp;
     tmp = dest;

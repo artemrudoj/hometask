@@ -3,6 +3,7 @@
 
 
 #define COMPRESSION_TYPE Z_DEFAULT_COMPRESSION
+
 int compressFile( char *source, char **dest, file_block* fb)
 {
 	*dest = (char *)malloc( fb->size_before + SIZE_OF_FILE_BLOCK);

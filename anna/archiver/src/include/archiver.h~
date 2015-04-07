@@ -14,7 +14,7 @@ typedef struct _file_block
 	mode_t st_mode;
 }file_block;
 
-int compressFile( int fd, char **dest, char *path);
+int compressFile( char *source, char **dest, file_block* fb);
 int decompressFile( char *source, char **dest );
 void makeFileWrapper(char *dest, file_block *fb );
 void makeFileBlockStruct( file_block *dest, struct stat *source, char *path );

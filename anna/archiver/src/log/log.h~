@@ -15,8 +15,6 @@
 #pragma once
 
 
-
-
 #define ALOGA( ... ) LOG ( A , __VA_ARGS__)
 #define ALOGD( ... ) LOG ( D , __VA_ARGS__)
 #define ALOGW( ... ) LOG ( W , __VA_ARGS__)

@@ -22,7 +22,7 @@
 #define ALOGF( ... ) LOG ( F , __VA_ARGS__)
 
 
-
+/* Warning: SIZE_OF_SHARED_BUFFER must not be 1 !*/
 
 
 #define SIZE_OF_SHARED_BUFFER 1024

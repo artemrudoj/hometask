@@ -1,5 +1,6 @@
 #include <libgen.h>
 
+#pragma once
 
 #define SIZE 256
 
